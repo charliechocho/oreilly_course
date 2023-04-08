@@ -1,4 +1,4 @@
 flasky/flasky-venv
 flasky/static
 data.sqlite
-
+migrations
