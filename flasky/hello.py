@@ -7,6 +7,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -17,9 +18,11 @@ app.config['SECRET_KEY'] = 'VGgzZGFya2hhbGYh'
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 class NameForm(FlaskForm):
     name = StringField('Skriv in ditt namn: ', validators=[DataRequired()])
+    last_name = StringField('Skriv in ditt Efternamn')
     submit = SubmitField('Skicka')
 
 class Role(db.Model):
@@ -39,7 +42,10 @@ class User(db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
-    
+
+@app.shell_context_processor
+def make_shell_context():
+    return dict(db=db, User=User, Role=Role)    
 
 @app.errorhandler(404)
 def page_not_found(e):
